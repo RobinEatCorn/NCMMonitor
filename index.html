@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+    <head>
+        <title>t3</title>
+        <meta charset='utf-8'>
+        <style>
+            ul {
+                list-style-type:none;
+                margin:0;
+                padding:0;
+            }
+            li {
+                padding-left:5%;
+            }
+            
+            .caret,.music-name {padding-left:1%;padding-right:1%;cursor:pointer;}
+            .caret:hover,.music-name:hover {background-color:#777777;cursor:pointer;}
+            .caret:active,.music-name:active {background-color:#000000;color:#ffffff;cursor:pointer;}
+            
+            .nested {display:none;}
+            .active {display:block;}
+            ::before,.snapshot-change,.playlist-change,.no-more {
+                background-color:#000000;
+                color:#ffffff;
+                font-weight:bold;
+                padding:0;
+                margin:0;
+                padding-left:1%;
+                padding-right:1%;
+                user-select:none;
+            }
+            .snapshot::before {content:"记录时间：";}
+            .playlist.same::before {content:"歌单：";}
+            .playlist.added::before {content:"新增歌单：";}
+            .playlist.deleted::before {content:"删除歌单：";}
+            .music.added::before {content:"新增曲目：";}
+            .music.deleted::before {content:"删除曲目：";}
+            
+            a.jump,.copy-playlist,.copy-music,#get-xml{
+                text-decoration:none;
+                text-align:right;
+                background-color:#eeeeee;
+                color:#000000;
+                padding-left:1%;
+                padding-right:1%;
+                user-select:none;
+            }
+            a.jump:hover,.copy-playlist:hover,.copy-music:hover,#get-xml:hover {
+                background-color:#888888;
+            }
+            a.jump:active,.copy-playlist:active,.copy-music:active,#get-xml:active {
+                background-color:#000000;
+                color:#ffffff;
+            }
+            
+            span#blk {
+                left:25%;
+                top:15%;
+                width:50%;
+                height:50%;
+                display:none;
+                position:absolute;
+                border:15px black solid;
+                background-color:#eeeeee;
+            }
+            p#blkz {
+                margin:15% 0;
+                display:block;
+                position:relative;
+                text-align:center;
+                font-size:300%;
+                font-weight:bold;
+                font-family:"黑体";
+            }
+            #get-xml {
+                text-align:center;
+                width:30%;
+            }
+        </style>
+        <script>
+            function show_block(s){
+                var blkz = document.getElementById("blkz");
+                var blk = document.getElementById("blk");
+                blkz.innerText=s;
+                blk.style.display="block";
+                setTimeout(()=>{blk.style.display="none";},1000);
+            }
+            function loading_listener(ndiv){
+                var crts=ndiv.getElementsByClassName("caret");
+                for(let i=0;i<crts.length;i+=1){
+                    //crts[i].parentElement.querySelector(".nested").classList.toggle("active");
+                    crts[i].addEventListener("click",()=>{
+                        //console.log(crts[i].parentElement.querySelector(".nested").classList);
+                        crts[i].parentElement.querySelector(".nested").classList.toggle("active");
+                    });
+                }
+                var cps=ndiv.getElementsByClassName("copy-playlist");
+                for(let i=0;i<cps.length;i+=1){
+                    cps[i].addEventListener("click",()=>{
+                        //console.log(cps[i].parentElement.querySelector(".caret").innerText);
+                        let txt=cps[i].parentElement.querySelector(".caret").textContent;
+                        navigator.clipboard.writeText(txt).then(
+                            ()=>{show_block(`复制成功：\n${txt}`)},
+                            ()=>{show_block(`复制失败`)});
+                    })
+                }
+                cps2=ndiv.getElementsByClassName("copy-music");
+                for(let i=0;i<cps2.length;i+=1){
+                    cps2[i].addEventListener("click",()=>{
+                        //console.log(cps2[i].parentElement.querySelector(".music-name").innerText);
+                        let txt=cps2[i].parentElement.querySelector(".music-name").innerText;
+                        navigator.clipboard.writeText(txt).then(
+                            ()=>{show_block(`复制成功：\n${txt}`)},
+                            ()=>{show_block(`复制失败`)});
+                    })
+                }
+            }
+            var currt_t=99999999999999999999;
+            var xml_blocking=false;
+            function get_xml(){
+                if(!xml_blocking){
+                    console.log("Script executed!");
+                    xml_blocking=true;
+                    document.getElementById("get-xml").innerText="正在获取……";
+                    var req=new XMLHttpRequest();
+                    req.onreadystatechange=()=>{
+                        if(req.readyState==4&&req.status==200){
+                            var new_div = document.createElement("div");
+                            console.log("[req.responseText]");
+                            console.log(req.responseText);
+                            new_div.innerHTML = req.responseText;
+                            document.body.appendChild(new_div);
+                            //currt_t=new_div.getElementByTagName("span")["id"];
+                            console.log("[new_div]");
+                            if(new_div.getElementsByClassName("no-more").length!=0){
+                                currt_t=0;
+                            } else {
+                                loading_listener(new_div);
+                                currt_t=new_div.getElementsByClassName("snapshot")[0]["id"];
+                            }
+                            xml_blocking=false;
+                            document.getElementById("get-xml").innerText="获取记录";
+                        }
+                    }
+                    req.open("GET",`?t=${currt_t}`,true);
+                    req.send();
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <span id="blk"><p id="blkz"></p></span>
+        <!----------------------Here----------------------------------->
+        <!------------------------------------------------------------->
+        <div id="get-xml" onclick="get_xml();">获取记录</div>
+        
+    </body>
+</html>
