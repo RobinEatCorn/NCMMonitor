@@ -2,7 +2,7 @@ const url=require("url");
 const fs=require("fs");
 const http=require("http");
 
-const PORT=8080;
+const PORT=8081;
 const MAIN_FILE=".\\index.html";
 const XML_PATH=".\\XMLs"
 
@@ -35,8 +35,13 @@ function get_last_xml([path,t]){
     });
 }
 
+function get_current_time(){
+    let t=new Date();
+    return `${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}-${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`;
+}
+
 http.createServer((req,res)=>{
-    console.log(req.url);
+    console.log(`${get_current_time()}||${req.connection.remoteAddress}||${req.url}`);
     req_url = url.parse(req.url,true);
     req_t = req_url["query"]["t"];
     if(req_t){

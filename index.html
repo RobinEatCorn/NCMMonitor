@@ -1,9 +1,16 @@
 <!doctype html>
 <html>
     <head>
-        <title>t3</title>
+        <title>S1公共网易云音乐账号歌单变化记录</title>
         <meta charset='utf-8'>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
         <style>
+			@media screen and (max-width: 920px) {
+				body {font-size:30px;}
+			}
+			@media screen and (max-width: 600px) {
+				body {font-size:10px;}
+			}
             ul {
                 list-style-type:none;
                 margin:0;
@@ -85,6 +92,15 @@
                 blk.style.display="block";
                 setTimeout(()=>{blk.style.display="none";},1000);
             }
+			function copy_text(txt){
+				console.log("Copy Function Executed.");
+				var cpy=document.getElementById("cpy");
+				cpy.style.display="block";
+				cpy.value=txt;
+				cpy.select();
+				document.execCommand("copy");
+				cpy.style.display="none";
+			}
             function loading_listener(ndiv){
                 var crts=ndiv.getElementsByClassName("caret");
                 for(let i=0;i<crts.length;i+=1){
@@ -99,19 +115,23 @@
                     cps[i].addEventListener("click",()=>{
                         //console.log(cps[i].parentElement.querySelector(".caret").innerText);
                         let txt=cps[i].parentElement.querySelector(".caret").textContent;
-                        navigator.clipboard.writeText(txt).then(
-                            ()=>{show_block(`复制成功：\n${txt}`)},
-                            ()=>{show_block(`复制失败`)});
+						copy_text(txt);
+						show_block(`复制成功：\n${txt}`);
+                        //navigator.clipboard.writeText(txt).then(
+                        //    ()=>{show_block(`复制成功：\n${txt}`)},
+                        //    ()=>{show_block(`复制失败`)});
                     })
                 }
-                cps2=ndiv.getElementsByClassName("copy-music");
+                var cps2=ndiv.getElementsByClassName("copy-music");
                 for(let i=0;i<cps2.length;i+=1){
                     cps2[i].addEventListener("click",()=>{
                         //console.log(cps2[i].parentElement.querySelector(".music-name").innerText);
                         let txt=cps2[i].parentElement.querySelector(".music-name").innerText;
-                        navigator.clipboard.writeText(txt).then(
-                            ()=>{show_block(`复制成功：\n${txt}`)},
-                            ()=>{show_block(`复制失败`)});
+						copy_text(txt);
+						show_block(`复制成功：\n${txt}`);
+                        //navigator.clipboard.writeText(txt).then(
+                        //    ()=>{show_block(`复制成功：\n${txt}`)},
+                        //    ()=>{show_block(`复制失败`)});
                     })
                 }
             }
@@ -149,6 +169,7 @@
         </script>
     </head>
     <body>
+		<input type="text" id="cpy" style="display:none;">
         <span id="blk"><p id="blkz"></p></span>
         <!----------------------Here----------------------------------->
         <!------------------------------------------------------------->
