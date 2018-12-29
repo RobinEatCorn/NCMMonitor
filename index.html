@@ -37,9 +37,12 @@
                 user-select:none;
             }
             .snapshot::before {content:"记录时间：";}
-            .playlist.same::before {content:"歌单：";}
-            .playlist.added::before {content:"新增歌单：";}
-            .playlist.deleted::before {content:"删除歌单：";}
+            .playlist.same.own::before {content:"歌单：";}
+            .playlist.added.own::before {content:"新增歌单：";}
+            .playlist.deleted.own::before {content:"删除歌单：";}
+            .playlist.same.collect::before {content:"收藏的歌单：";}
+            .playlist.added.collect::before {content:"新增收藏歌单："}
+            .playlist.deleted.collect::before {content:"删除收藏歌单："}
             .music.added::before {content:"新增曲目：";}
             .music.deleted::before {content:"删除曲目：";}
             

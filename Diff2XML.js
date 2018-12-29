@@ -1,8 +1,9 @@
 const fs = require("fs");
 const xmlbuilder = require("xmlbuilder");
 
-DIFF_PATH=".\\Differences";
-XML_PATH=".\\XMLs";
+const DIFF_PATH=".\\Differences";
+const XML_PATH=".\\XMLs";
+const USER_ID = "587376989";//S1
 
 function log(v){console.log(v);}
 function Slog(v){console.log(JSON.stringify(v));}
@@ -69,9 +70,15 @@ function convert_snapshot_to_xml([did,diff_data]){
         var musics_added = 0;
         var musics_deleted = 0;
         var playlist = playlists.ele("li").att("id",pl["playlist"]["id"]);
-        if(pl["type"]=="+"){playlists_added+=1;playlist.att("class","playlist added");}
-        if(pl["type"]=="-"){playlists_deleted+=1;playlist.att("class","playlist deleted")}
-        if(pl["type"]=="~"){playlist.att("class","playlist same");}
+        var cls="playlist";
+        //if(pl["type"]=="+"){playlists_added+=1;playlist.att("class","playlist added");}
+        if(pl["type"]=="+"){playlists_added+=1;cls+=" added";}
+        //if(pl["type"]=="-"){playlists_deleted+=1;playlist.att("class","playlist deleted")}
+        if(pl["type"]=="-"){playlists_deleted+=1;cls+=" deleted";}
+        //if(pl["type"]=="~"){playlist.att("class","playlist same");}
+        if(pl["type"]=="~"){cls+=" same";}
+        if(pl["playlist"]["creator"]["userId"]!=USER_ID){cls+=" collect";}else{cls+=" own";}
+        playlist.att("class",cls);
         //playlist.att("class",`playlist ${symbol_to_english(pl["type"])}`);
         playlist.ele("span").att("class","caret").txt(pl["playlist"]["name"]).up();
         var playlist_change=playlist.ele("span").att("class","playlist-change");
